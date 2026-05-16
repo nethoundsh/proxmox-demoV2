@@ -7,7 +7,7 @@ Terraform configuration for a Proxmox home lab. Provisions a jump host and one o
 ```
 Your machine
     │
-    │ SSH (192.168.1.52)
+    │ SSH (<jump-host-ip>)
     ▼
 lab-ubuntu  ── vmbr0 (LAN, DHCP) ──► internet
     │
@@ -42,7 +42,7 @@ cp terraform.tfvars.example terraform.tfvars   # if you have an example
 ```
 
 ```hcl
-pve_endpoint    = "https://192.168.1.11:8006/"
+pve_endpoint    = "https://<pve-host-ip>:8006/"
 pve_api_token   = "pippi@pam!TOKEN_NAME=TOKEN_SECRET"
 ubuntu_password = "yourpassword"
 ```
@@ -50,7 +50,7 @@ ubuntu_password = "yourpassword"
 The API token format is `username@realm!token_name=secret_uuid`. Find your token name with:
 
 ```bash
-ssh pippi@192.168.1.11 'pveum user token list pippi@pam'
+ssh pippi@<pve-host-ip> 'pveum user token list pippi@pam'
 ```
 
 **2. Initialize and apply:**
@@ -66,19 +66,19 @@ First apply takes several minutes — it downloads the Ubuntu cloud image to the
 
 **To the jump host:**
 ```bash
-ssh ubuntu@192.168.1.52
+ssh ubuntu@<jump-host-ip>
 ```
 
 **To a target VM (through the jump host):**
 ```bash
-ssh -J ubuntu@192.168.1.52 ubuntu@10.10.10.11
+ssh -J ubuntu@<jump-host-ip> ubuntu@10.10.10.11
 ```
 
 **Recommended `~/.ssh/config` entry:**
 ```
 Host 10.10.10.*
   User ubuntu
-  ProxyJump ubuntu@192.168.1.52
+  ProxyJump ubuntu@<jump-host-ip>
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
 ```
