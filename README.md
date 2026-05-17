@@ -34,23 +34,21 @@ target-02 (10.10.10.12)   ← add more by editing locals.target_vms
 
 ## Setup
 
-**1. Copy and fill in variables:**
-
-```bash
-cp terraform.tfvars.example terraform.tfvars   # if you have an example
-# or create terraform.tfvars directly:
-```
+**1. Create `terraform.tfvars`:**
 
 ```hcl
-pve_endpoint    = "https://<pve-host-ip>:8006/"
+pve_endpoint    = "https://<your-pve-ip>:8006/"
 pve_api_token   = "<user>@pam!TOKEN_NAME=TOKEN_SECRET"
+pve_node_name   = "<your-node-name>"
+pve_ssh_host    = "<your-pve-ip>"
+pve_ssh_user    = "<your-pve-ssh-user>"
 ubuntu_password = "yourpassword"
 ```
 
 The API token format is `username@realm!token_name=secret_uuid`. Find your token name with:
 
 ```bash
-ssh <pve-user>@<pve-host-ip> 'pveum user token list <user>@pam'
+ssh <your-pve-ssh-user>@<your-pve-ip> 'pveum user token list <user>@pam'
 ```
 
 **2. Initialize and apply:**
@@ -66,6 +64,9 @@ First apply takes several minutes — it downloads the Ubuntu cloud image to the
 
 **To the jump host:**
 ```bash
+# Get the jump host IP from Terraform output
+terraform output vm_ipv4_address
+
 ssh ubuntu@<jump-host-ip>
 ```
 
