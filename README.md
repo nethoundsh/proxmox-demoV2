@@ -27,8 +27,8 @@ target-02 (10.10.10.12)   ← add more by editing locals.target_vms
 
 - Proxmox VE host (tested on 9.1.11) with:
   - Two datastores: `local` (dir, for ISOs and snippets) and `local-zfs` (ZFS, for VM disks)
-  - A PAM user (`pippi`) with an API token and SSH key access
-  - A sudoers rule at `/etc/sudoers.d/pippi-terraform` granting passwordless access to: `tee /var/lib/vz/*`, `tee /etc/pve/*`, `pvesm`, `qm`, `pvesh`, `ifreload`, `ifup`, `ifdown`
+  - A PAM user (e.g. `terraform`) with an API token and SSH key access
+  - A sudoers rule at `/etc/sudoers.d/<user>-terraform` granting passwordless access to: `tee /var/lib/vz/*`, `tee /etc/pve/*`, `pvesm`, `qm`, `pvesh`, `ifreload`, `ifup`, `ifdown`
 - Terraform >= 1.3.0
 - SSH agent running with your key loaded (`ssh-add`)
 
@@ -43,14 +43,14 @@ cp terraform.tfvars.example terraform.tfvars   # if you have an example
 
 ```hcl
 pve_endpoint    = "https://<pve-host-ip>:8006/"
-pve_api_token   = "pippi@pam!TOKEN_NAME=TOKEN_SECRET"
+pve_api_token   = "<user>@pam!TOKEN_NAME=TOKEN_SECRET"
 ubuntu_password = "yourpassword"
 ```
 
 The API token format is `username@realm!token_name=secret_uuid`. Find your token name with:
 
 ```bash
-ssh pippi@<pve-host-ip> 'pveum user token list pippi@pam'
+ssh <pve-user>@<pve-host-ip> 'pveum user token list <user>@pam'
 ```
 
 **2. Initialize and apply:**

@@ -5,6 +5,6 @@ provider "proxmox" {
 
   ssh {
     agent    = true
-    username = "pippi"
+    username = var.pve_ssh_user
   }
 }

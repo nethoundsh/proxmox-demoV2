@@ -273,7 +273,7 @@ resource "null_resource" "target_baseline_snapshot" {
     user         = "ubuntu"
     host         = each.value
     agent        = true
-    bastion_host = try(proxmox_virtual_environment_vm.lab_ubuntu.ipv4_addresses[1][0], "192.168.1.52")
+    bastion_host = proxmox_virtual_environment_vm.lab_ubuntu.ipv4_addresses[1][0]
     bastion_user = "ubuntu"
   }
 
@@ -282,7 +282,7 @@ resource "null_resource" "target_baseline_snapshot" {
   }
 
   provisioner "local-exec" {
-    command = "ssh -o StrictHostKeyChecking=no pippi@192.168.1.11 'sudo qm snapshot ${proxmox_virtual_environment_vm.target[each.key].vm_id} clean --description \"Terraform baseline\"'"
+    command = "ssh -o StrictHostKeyChecking=no ${var.pve_ssh_user}@${var.pve_ssh_host} 'sudo qm snapshot ${proxmox_virtual_environment_vm.target[each.key].vm_id} clean --description \"Terraform baseline\"'"
   }
 }
 
@@ -294,8 +294,8 @@ resource "local_file" "reset_script" {
   content         = <<-SCRIPT
     #!/usr/bin/env bash
     set -euo pipefail
-    PVE_HOST="192.168.1.11"
-    PVE_USER="pippi"
+    PVE_HOST="${var.pve_ssh_host}"
+    PVE_USER="${var.pve_ssh_user}"
     SNAPSHOT="clean"
 
     declare -A TARGETS=(
